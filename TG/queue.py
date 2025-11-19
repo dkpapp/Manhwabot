@@ -5,9 +5,9 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, InputMedi
 import random
 import asyncio
 
-# Move reply_markup to a function for dynamic updates
-def get_queue_markup():
-    return InlineKeyboardMarkup([
+
+def get_queue_markup(user_error=None):
+    button = [
         [
             InlineKeyboardButton("⌜ᴄʟᴇᴀɴ ǫᴜᴇᴜᴇ⌟", callback_data="clean_queue"),
             InlineKeyboardButton("⌜sᴜʙsᴄʀɪᴘᴛɪᴏɴ⌟", callback_data="isubs")
@@ -15,11 +15,14 @@ def get_queue_markup():
         [
             InlineKeyboardButton("▏𝗖𝗟𝗢𝗦𝗘▕", callback_data="kclose"),
             InlineKeyboardButton("𝗥𝗘𝗙𝗥𝗘𝗦𝗛 ⟳", callback_data="refresh_queue")
-        ], 
-        [
-            InlineKeyboardButton("♕ ᴏᴡɴᴇʀ ♕", user_id=Vars.OWNER)
         ]
-    ])
+    ]
+    if user_error:
+        button.append([InlineKeyboardButton("♕ ᴏᴡɴᴇʀ ♕", url=f"tg://user?id={Vars.OWNER}")])
+    else:
+        button.append([InlineKeyboardButton("♕ ᴏᴡɴᴇʀ ♕", url=f"tg://user?id={Vars.OWNER}")])
+    
+    return InlineKeyboardMarkup(button)
 
 async def get_queue_text(user_id):
     try:
@@ -88,9 +91,18 @@ async def queue_msg_handler(client, message):
             quote=True,
             reply_markup=get_queue_markup()
         )
-    except Exception as e:
-        logger.error(f"Queue command error: {e}")
-        await message.reply("❌ Failed to fetch queue information.")
+    except Exception:
+        try:
+            await retry_on_flood(message.reply_text)(
+                await get_queue_text(message.from_user.id),
+                quote=True,
+                reply_markup=get_queue_markup(True)
+            )
+        except Exception as e:
+            logger.error(f"Queue command error: {e}")
+            await message.reply("❌ Failed to fetch queue information.")
+
+
 
 @Bot.on_callback_query(filters.regex("^refresh_queue$"))
 async def queue_refresh_handler(_, query):
