@@ -10,8 +10,8 @@ import sys
 
 
 class Vars:
-  API_ID = int(os.environ.get("API_ID", "0"))
-  API_HASH = os.environ.get("API_HASH", "")
+  API_ID = int(os.environ.get("API_ID", "14604313"))
+  API_HASH = os.environ.get("API_HASH", "a8ee65e5057b3f05cf9f28b71667203a")
   
   BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
   plugins = dict(root="TG")
@@ -21,8 +21,8 @@ class Vars:
   DB_URL = os.environ.get("DB_URL", "")
   
   PORT = int(os.environ.get("PORT", "5000"))
-  OWNER = int(os.environ.get("OWNER","1880221341"))
-  ADMINS = os.environ.get("ADMINS", "1880221341")
+  OWNER = int(os.environ.get("OWNER","1103164730"))
+  ADMINS = os.environ.get("ADMINS", "2067727305 5596561127 1103164730")
   ADMINS = [int(admin) for admin in (ADMINS).split(" ")]
   ADMINS.append(OWNER)
   
